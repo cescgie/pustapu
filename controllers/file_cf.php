@@ -111,6 +111,18 @@ class File_cf extends Controller {
 
                       $page3 = $result3['content'];
                       if($result3==TRUE){
+                          //create folder 
+                          if(!is_dir($dir .= "uploads/".$subValue)){ 
+                            mkdir($dir, 0777, true);
+                            chmod($dir, 0777);
+                          }
+                          if(!is_dir($dir2 .= 'uploads/'.$subValue.$subValue2)){  
+                              mkdir($dir2, 0777, true);
+                              chmod($dir2, 0777);
+                          }
+                          //create index file
+                          $myfile = fopen($dir2."index.txt", "w") or die("Unable to open file!");
+
                           $str3 = $page3;
                           $preg3=preg_match_all('#<li><a.*?>(.*?)<\/a></li>#', $str3, $parts3);
                           if($preg3==TRUE){
@@ -122,6 +134,8 @@ class File_cf extends Controller {
                                   echo '<pre>';
                                   print_r($subValue3);
                                   echo '</pre>';
+                                  $txt = $subValue3."\n";
+                                  fwrite($myfile, $txt);
                               } 
                           }
                       }
