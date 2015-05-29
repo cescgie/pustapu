@@ -131,25 +131,52 @@ class File_cf extends Controller {
                               for ($i = 1; $i < $countArray; $i++) {
                                   //rename file. Before : "(1 space)filename"
                                   $subValue3 = substr($parts3[1][$i], 1);
-                                  echo '<pre>';
-                                  print_r($subValue3);
-                                  echo '</pre>';
-                                  //overwrite index.txt
-                                  $txt = $subValue3."\n";
-                                  fwrite($myfile, $txt);
                                   //upload files to storage
                                   //url to files
                                   $newurl3="http://sgsdata.adtech.de/59.1/0/cf/".$subValue.$subValue2.$subValue3."";
-                                  set_time_limit(0); 
-                                  $filet = file_get_contents($newurl3); 
-                                  file_put_contents($dir2.$subValue3, $filet,FILE_APPEND);
+                                  
+                                  //Convert files(gz) to bin directly before put them in upload directory
+                                  if (substr($subValue3, -3) !== '.gz'){
+                                    $filenames = $subValue3;
+                                    $this->download_remote_file_with_curl($newurl3, $dir2.$filenames);
+                                  }else{
+                                    $rest = substr($subValue3, 0, -3);
+                                    $filenames = $rest;
+                                    $this->download_remote_file_with_curl($newurl3, $dir2.$filenames);
+                                  }
+
+                                  //overwrite index.txt
+                                  $txt = $filenames."\n";
+                                  fwrite($myfile, $txt);
+                                  echo '<pre>';
+                                  print_r($filenames);
+                                  echo '</pre>';
                               } 
                           }
+                          
                       }
                   }
               }
           }
       }
   }
+  function download_remote_file_with_curl($files_url, $save_to)
+  {
+      $username = ADS_USER;
+      $password = ADS_PASS;
+      $che = curl_init();
+      curl_setopt($che, CURLOPT_POST, 0); 
+      curl_setopt($che, CURLOPT_URL,$files_url); 
+      curl_setopt($che, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($che, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+      curl_setopt($che, CURLOPT_USERPWD, "$username:$password");
 
+      $content = curl_exec($che);
+                              
+      $download = fopen($save_to, 'w');
+      fwrite($download, $content);
+      fclose($downloaded_file);
+      curl_close( $che );
+ 
+  }
 }
