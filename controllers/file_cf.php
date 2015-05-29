@@ -9,7 +9,7 @@ class File_cf extends Controller {
    public function index() {
       $data['title'] = 'AdServer Daten';
       $this->connect();
-
+      //clearstatcache();
       $this->_view->render('header', $data);
       $this->_view->render('warn', $data);
       $this->_view->render('footer');
@@ -134,8 +134,15 @@ class File_cf extends Controller {
                                   echo '<pre>';
                                   print_r($subValue3);
                                   echo '</pre>';
+                                  //overwrite index.txt
                                   $txt = $subValue3."\n";
                                   fwrite($myfile, $txt);
+                                  //upload files to storage
+                                  //url to files
+                                  $newurl3="http://sgsdata.adtech.de/59.1/0/cf/".$subValue.$subValue2.$subValue3."";
+                                  set_time_limit(0); 
+                                  $filet = file_get_contents($newurl3); 
+                                  file_put_contents($dir2.$subValue3, $filet,FILE_APPEND);
                               } 
                           }
                       }

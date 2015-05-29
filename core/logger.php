@@ -68,7 +68,7 @@ class Logger {
       $date = date('M d, Y G:iA');
       $log_message = "<p>Error on $date - $error</p>\n\n";
 
-      file_put_contents($error_file, $log_message, FILE_APPEND);
+      //file_put_contents($error_file, $log_message, FILE_APPEND);
 
       if ($print_error == true) {
          echo $log_message;
