@@ -6,10 +6,10 @@ class File_cf_Model extends Model {
       parent::__construct();
    }
    public function all() {
-      return $this->_db->select('SELECT * FROM cf_table ORDER BY id DESC LIMIT 0, 20');
+      return $this->_db->select('SELECT * FROM cf ORDER BY id DESC LIMIT 0, 20');
    }
     public function _insert($datas) {
-     $this->_db->insert('cf_table', $datas);
+     $this->_db->insert('cf', $datas);
    }
 
 }
