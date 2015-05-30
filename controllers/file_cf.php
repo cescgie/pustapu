@@ -138,11 +138,19 @@ class File_cf extends Controller {
                                   //Convert files(gz) to bin directly before put them in upload directory
                                   if (substr($subValue3, -3) !== '.gz'){
                                     $filenames = $subValue3;
-                                    $this->download_remote_file_with_curl($newurl3, $dir2.$filenames);
+                                    //check if the file exists
+                                    if(!is_file(getcwd()."/".$dir2.$subValue3))
+                                    { 
+                                      $this->download_remote_file_with_curl($newurl3, $dir2.$filenames);
+                                    }
                                   }else{
                                     $rest = substr($subValue3, 0, -3);
                                     $filenames = $rest;
-                                    $this->download_remote_file_with_curl($newurl3, $dir2.$filenames);
+                                    //check if the file exists
+                                    if(!is_file(getcwd()."/".$dir2.$rest))
+                                    { 
+                                      $this->download_remote_file_with_curl($newurl3, $dir2.$filenames);
+                                    }
                                   }
 
                                   //overwrite index.txt
