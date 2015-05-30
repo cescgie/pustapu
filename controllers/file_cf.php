@@ -134,40 +134,63 @@ class File_cf extends Controller {
                                   //upload files to storage
                                   //url to files
                                   $newurl3="http://sgsdata.adtech.de/59.1/0/cf/".$subValue.$subValue2.$subValue3."";
-                                  
-                                  //Convert files(gz) to bin directly before put them in upload directory
-                                  if (substr($subValue3, -3) !== '.gz'){
-                                    $filenames = $subValue3;
-                                    //check if the file exists
-                                    if(!is_file(getcwd()."/".$dir2.$subValue3))
-                                    { 
-                                      $this->download_remote_file_with_curl($newurl3, $dir2.$filenames);
+                                  $subName = substr($subValue3,0,-3);
+                                  //echo $subNameSub;
+                                  if(!is_file(getcwd()."/".$dir2.$subName)){
+                                    //download remote files
+                                    $this->download_remote_file_with_curl($newurl3, getcwd()."/".$dir2.$subValue3);
+                                    //check if uploaded file extention is gz
+                                    if (substr(getcwd()."/".$dir2.$subValue3, -3) !== '.gz') {
+                                          //rename
+                                          $filenames = $subValue3;
+                                    }else{
+                                          //Convert files(gz) to bin directly after put them in uploads directory
+                                          $this->convert(getcwd()."/".$dir2.$subValue3);
+                                          //rename
+                                          $filenames = substr($subValue3, 0, -3);
+                                          //delete gz file
+                                          unlink(getcwd()."/".$dir2.$subValue3);
                                     }
                                   }else{
-                                    $rest = substr($subValue3, 0, -3);
-                                    $filenames = $rest;
-                                    //check if the file exists
-                                    if(!is_file(getcwd()."/".$dir2.$rest))
-                                    { 
-                                      $this->download_remote_file_with_curl($newurl3, $dir2.$filenames);
-                                    }
-                                  }
-
+                                    $filenames = substr($subValue3, 0, -3);
+                                  } 
                                   //overwrite index.txt
                                   $txt = $filenames."\n";
                                   fwrite($myfile, $txt);
                                   echo '<pre>';
                                   print_r($filenames);
                                   echo '</pre>';
-                              } 
+                              }
                           }
-                          
                       }
                   }
               }
           }
       }
   }
+
+  function convert($file_in)
+  {
+    //This input should be from somewhere else, hard-coded in this example
+    $file_name = $file_in;
+    // Raising this value may increase performance
+    $buffer_size = 4096; // read 4kb at a time
+    $out_file_name = str_replace('.gz', '', $file_name); 
+    // Open our files (in binary mode)
+    $file = gzopen($file_name, 'rb');
+    $out_file = fopen($out_file_name, 'wb'); 
+    // Keep repeating until the end of the input file
+    while(!gzeof($file)) {
+      // Read buffer-size bytes
+      // Both fwrite and gzread and binary-safe
+      fwrite($out_file, gzread($file, $buffer_size));
+    } 
+    // Files are done, close files
+    fclose($out_file);
+    gzclose($file);
+    echo $out_file;
+  }
+
   function download_remote_file_with_curl($files_url, $save_to)
   {
       $username = ADS_USER;
@@ -183,8 +206,7 @@ class File_cf extends Controller {
                               
       $download = fopen($save_to, 'w');
       fwrite($download, $content);
-      fclose($downloaded_file);
+      fclose($download);
       curl_close( $che );
- 
   }
 }
