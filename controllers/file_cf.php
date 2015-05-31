@@ -135,33 +135,37 @@ class File_cf extends Controller {
                                   //url to files
                                   $newurl3="http://sgsdata.adtech.de/59.1/0/cf/".$subValue.$subValue2.$subValue3."";
                                   $subName = substr($subValue3,0,-3);
-                                  //echo $subNameSub;
+                                  //check if files already exist
                                   if(!is_file(getcwd()."/".$dir2.$subName)){
-                                    //download remote files
-                                    $this->download_remote_file_with_curl($newurl3, getcwd()."/".$dir2.$subValue3);
-                                    //check if uploaded file extention is gz
-                                    if (substr(getcwd()."/".$dir2.$subValue3, -3) !== '.gz') {
-                                          //rename
-                                          $filenames = $subValue3;
-                                    }else{
-                                          //Convert files(gz) to bin directly after put them in uploads directory
-                                          $this->convert(getcwd()."/".$dir2.$subValue3);
-                                          //rename
-                                          $filenames = substr($subValue3, 0, -3);
-                                          //delete gz file
-                                          unlink(getcwd()."/".$dir2.$subValue3);
-                                    }
+                                    //check if files had been already parsed
+                                    if(!is_file(getcwd()."/".$dir2.$subName.".done")){
+                                      //download remote files
+                                      $this->download_remote_file_with_curl($newurl3, getcwd()."/".$dir2.$subValue3);
+                                      //check if uploaded file extention is gz
+                                      if (substr(getcwd()."/".$dir2.$subValue3, -3) !== '.gz') {
+                                            //rename
+                                            $filenames = $subValue3;
+                                      }else{
+                                            //Convert files(gz) to bin directly after put them in uploads directory
+                                            $this->convert(getcwd()."/".$dir2.$subValue3);
+                                            //rename
+                                            $filenames = substr($subValue3, 0, -3);
+                                            //delete gz file
+                                            unlink(getcwd()."/".$dir2.$subValue3);
+                                      }
                                   }else{
                                     $filenames = substr($subValue3, 0, -3);
                                   } 
-                                  $this->parse($dir2,$filenames);
                                   //overwrite index.txt
                                   $txt = $filenames."\n";
                                   fwrite($myfile, $txt);
                                   echo '<pre>';
                                   print_r($filenames);
                                   echo '</pre>';
+                                }
                               }
+                              //Parse files into Database
+                              $this->parse($dir2);
                           }
                       }
                   }
@@ -211,7 +215,7 @@ class File_cf extends Controller {
       curl_close( $che );
   }
 
-  public function parse($dir2,$filenames) {
+  public function parse($dir2) {
       //echo $dir2.$filenames;
       ini_set('max_execution_time', 68000); 
       @set_time_limit(68000);
@@ -315,12 +319,12 @@ class File_cf extends Controller {
       //$file_name = getcwd()."/".$dir2.$filenames;
       //echo $file_name."___";
 
-    //$handlefolder = opendir (getcwd());
-    //while ($file = readdir ($handlefolder)) {
-      if (substr($filenames, -4) == '.bin') {
-        $fileopen = getcwd()."/".$dir2.$filenames;
+    $handlefolder = opendir (getcwd()."/".$dir2);
+    while ($file = readdir ($handlefolder)) {
+      if (substr($file, -4) == '.bin') {
+        //$fileopen = getcwd()."/".$dir2.$filenames;
         //echo getcwd()."/".$dir2.$file;
-        $handle = fopen($fileopen, 'rb');
+        $handle = fopen(getcwd()."/".$dir2.$file, 'rb');
         while ($contents = fread($handle, $rowSize)) {
             $tmpObject = array();
             for ($i=0; $i<$rowLength; $i++) {
@@ -394,17 +398,17 @@ class File_cf extends Controller {
             $datas['QueryString'] =$tmpObject[38];
             $datas['LinkUrl'] =$tmpObject[39];
             $datas['UserAgent'] =$tmpObject[40];
-            $datas['in_bin'] = $filenames;
+            //$datas['in_bin'] = $filenames;
             //echo $tmpObject[16]."___";
 
             $this->_model->_insert($datas);
-        } //end of while ($contents = fread($handle, $rowSize))
+        }; //end of while ($contents = fread($handle, $rowSize))
          //rename bin folder in path uploads/ 
          @fclose($handle);
-         @chmod($fileopen, 0666);
-         @rename($fileopen, $fileopen.'.done');
-      }
+         @chmod(getcwd()."/".$dir2.$file, 0666);
+         @rename(getcwd()."/".$dir2.$file, getcwd()."/".$dir2.$file.'.done');
+      };
       $debugTimeEnd = microtime(true); 
-    //} //end of while ($file = readdir ($handlefolder))
+    } //end of while ($file = readdir ($handlefolder))
   }  //end of function
 }
