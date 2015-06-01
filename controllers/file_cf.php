@@ -8,10 +8,11 @@ class File_cf extends Controller {
 
    public function index() {
       $data['title'] = 'AdServer Daten';
-      $this->connect();
-      //clearstatcache();
+      $data['sum'] = $this->_model->summe();
+      $data['datum'] = date("Y-m-d H:i:s");
       $this->_view->render('header', $data);
       $this->_view->render('warn', $data);
+      $this->connect();
       $this->_view->render('footer');
    }
 

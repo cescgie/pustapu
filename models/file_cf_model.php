@@ -11,5 +11,8 @@ class File_cf_Model extends Model {
     public function _insert($datas) {
      $this->_db->insert('cf', $datas);
    }
+   public function summe(){
+      return $this->_db->select("SELECT count(*) as 'Summe' from cf");
+   }
 
 }
