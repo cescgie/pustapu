@@ -174,7 +174,7 @@ class File_cf extends Controller {
       }
   }
 
-  function convert($file_in)
+  public function convert($file_in)
   {
     //This input should be from somewhere else, hard-coded in this example
     $file_name = $file_in;
@@ -196,7 +196,7 @@ class File_cf extends Controller {
     echo $out_file;
   }
 
-  function download_remote_file_with_curl($files_url, $save_to)
+  public function download_remote_file_with_curl($files_url, $save_to)
   {
       $username = ADS_USER;
       $password = ADS_PASS;
@@ -316,14 +316,9 @@ class File_cf extends Controller {
       */
       $errorcode = array('-2', '-3', '-4', '-6', '-7', '-10', '-23', '-26', '-98');
 
-      //$file_name = getcwd()."/".$dir2.$filenames;
-      //echo $file_name."___";
-
     $handlefolder = opendir (getcwd()."/".$dir2);
     while ($file = readdir ($handlefolder)) {
       if (substr($file, -4) == '.bin') {
-        //$fileopen = getcwd()."/".$dir2.$filenames;
-        //echo getcwd()."/".$dir2.$file;
         $handle = fopen(getcwd()."/".$dir2.$file, 'rb');
         while ($contents = fread($handle, $rowSize)) {
             $tmpObject = array();
@@ -398,16 +393,16 @@ class File_cf extends Controller {
             $datas['QueryString'] =$tmpObject[38];
             $datas['LinkUrl'] =$tmpObject[39];
             $datas['UserAgent'] =$tmpObject[40];
-            //$datas['in_bin'] = $filenames;
-            //echo $tmpObject[16]."___";
-
+            $datas['in_bin'] = $file;
+            //insert to database
             $this->_model->_insert($datas);
         }; //end of while ($contents = fread($handle, $rowSize))
+         
          //rename bin folder in path uploads/ 
          @fclose($handle);
          @chmod(getcwd()."/".$dir2.$file, 0666);
          @rename(getcwd()."/".$dir2.$file, getcwd()."/".$dir2.$file.'.done');
-      };
+      }; //end of if (substr($file, -4) == '.bin') {
       $debugTimeEnd = microtime(true); 
     } //end of while ($file = readdir ($handlefolder))
   }  //end of function
