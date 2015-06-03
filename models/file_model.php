@@ -35,5 +35,15 @@ class File_Model extends Model {
    public function summe_gl(){
       return $this->_db->select("SELECT count(*) as 'Summe_gl' from gl");
    }
+   //IR DB
+   public function all_ir() {
+      return $this->_db->select('SELECT * FROM ir ORDER BY id DESC LIMIT 0, 20');
+   }
+   public function _insert_ir($datas) {
+     $this->_db->insert('ir', $datas);
+   }
+   public function summe_ir(){
+      return $this->_db->select("SELECT count(*) as 'Summe_ir' from ir");
+   }
 
 }
