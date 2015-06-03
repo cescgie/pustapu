@@ -81,5 +81,21 @@
           }
       echo
       '</div> <!-- panel panel-default -->';               
-  } 
+  }
+  //KW Information
+  if (!sizeof($data['sum_kw'])) {
+      echo 
+      '<div class="alert alert-info">No KW Data.</div>';
+  }else{
+      echo
+      '<div class="panel panel-default">
+          <!-- Default panel contents -->
+          <div class="panel-heading">KW</div>';
+          foreach ($data['sum_kw'] as $sum_kw){
+              echo 
+              '<p>'.$sum_kw['Summe_kw']. ' Records</p>';
+          }
+      echo
+      '</div> <!-- panel panel-default -->';               
+  }  
   ?>

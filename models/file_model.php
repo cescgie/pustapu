@@ -55,5 +55,14 @@ class File_Model extends Model {
    public function summe_kv(){
       return $this->_db->select("SELECT count(*) as 'Summe_kv' from kv");
    }
-
+   //KW DB
+   public function all_kw() {
+      return $this->_db->select('SELECT * FROM kw ORDER BY id DESC LIMIT 0, 20');
+   }
+   public function _insert_kw($datas) {
+     $this->_db->insert('kw', $datas);
+   }
+   public function summe_kw(){
+      return $this->_db->select("SELECT count(*) as 'Summe_kw' from kw");
+   }
 }
