@@ -25,7 +25,7 @@ set_exception_handler('logger::exception_handler');
 set_error_handler('logger::error_handler');
 
 $app = new Bootstrap();
-$app->setController('file_cf');
+$app->setController('file');
 $app->init();
 
 ob_flush();
