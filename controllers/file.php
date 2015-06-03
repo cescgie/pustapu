@@ -226,8 +226,8 @@ class File extends Controller {
   }
 
   public function parse_cf($dir2) {
-      ini_set('max_execution_time', 68000); 
-      @set_time_limit(68000);
+      ini_set('max_execution_time', 0); 
+      @set_time_limit(0);
 
       $debugTimeStart = microtime(true); 
 
@@ -417,8 +417,8 @@ class File extends Controller {
   }  //end of function
 
   public function parse_ga($dir2) {
-      ini_set('max_execution_time', 68000); 
-      @set_time_limit(68000);
+      ini_set('max_execution_time', 0); 
+      @set_time_limit(0);
 
       $debugTimeStart = microtime(true); 
 

@@ -8,6 +8,5 @@
    <link rel="stylesheet" href="<?= URL::STYLES('style') ?>">
 </head>
 <body>
-
    <div class="container">
       <br>
