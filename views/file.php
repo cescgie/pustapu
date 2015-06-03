@@ -13,7 +13,7 @@
           <div class="panel-heading">CF</div>';
           foreach ($data['sum_cf'] as $sum){
              echo 
-            '<p> Summe of CF list : '.$sum['Summe_cf'].'</p>';
+            '<p>'.$sum['Summe_cf']. ' Records</p>';
           }
       echo
       '</div> <!-- panel panel-default -->'; 
@@ -29,7 +29,23 @@
           <div class="panel-heading">GA</div>';
           foreach ($data['sum_ga'] as $sum_ga){
               echo 
-              '<p> Summe of GA list : '.$sum_ga['Summe_ga'].'</p>';
+              '<p>'.$sum_ga['Summe_ga']. ' Records</p>';
+          }
+      echo
+      '</div> <!-- panel panel-default -->';               
+  } 
+  //GL Information
+  if (!sizeof($data['sum_gl'])) {
+      echo 
+      '<div class="alert alert-info">No GL Data.</div>';
+  }else{
+      echo
+      '<div class="panel panel-default">
+          <!-- Default panel contents -->
+          <div class="panel-heading">GL</div>';
+          foreach ($data['sum_gl'] as $sum_gl){
+              echo 
+              '<p>'.$sum_gl['Summe_gl']. ' Records</p>';
           }
       echo
       '</div> <!-- panel panel-default -->';               
