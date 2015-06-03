@@ -23,7 +23,7 @@
                 echo
                 '<div class="panel panel-default">
                       <!-- Default panel contents -->
-                       <div class="panel-heading">CF</div>';
+                       <div class="panel-heading">GA</div>';
                         foreach ($data['sum_ga'] as $sum_ga){
                           echo '<p> Summe of all GA : '.$sum_ga['Summe_ga'].'</p>
                               <p> Updated at : '.$data['datum'].'</p>';

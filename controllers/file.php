@@ -8,14 +8,19 @@ class File extends Controller {
 
    public function index() {
       $data['title'] = 'AdServer Daten';
+      $this->all_connection();
       $data['sum_cf'] = $this->_model->summe_cf();
       $data['sum_ga'] = $this->_model->summe_ga();
       $data['datum'] = date("Y-m-d H:i:s");
+
       $this->_view->render('header', $data);
-      $this->_view->render('warn', $data);
-      $this->connect_cf();
-      $this->connect_ga();
+      $this->_view->render('file', $data);
       $this->_view->render('footer');
+   }
+
+   public function all_connection(){
+      $this->connect('cf');
+      $this->connect('ga');
    }
 
    public function get_web_page( $url )
@@ -97,11 +102,11 @@ class File extends Controller {
       curl_close( $che );
   }
 
-  public function connect_cf()
+  public function connect($table)
   {
       //Read a web page and check for errors:
-      $url = "http://sgsdata.adtech.de/59.1/0/cf/";
-       
+      $url = "http://sgsdata.adtech.de/59.1/0/".$table."/";
+      //echo $url;
       $result = $this->get_web_page( $url );
 
       if ( $result['errno'] != 0 )
@@ -122,7 +127,7 @@ class File extends Controller {
               $maxIndex = array_search(max($parts[0]), $parts[0]);
               //rename value from $maxIndex. Before : "(1 space)value"
               $subValue = substr($parts[1][$maxIndex], 1);
-              $newurl="http://sgsdata.adtech.de/59.1/0/cf/".$subValue."";
+              $newurl=$url.$subValue."";
               //print_r($newurl);
 
               $result2 = $this->get_web_page( $newurl );
@@ -144,7 +149,7 @@ class File extends Controller {
                       $maxIndex2 = array_search(max($parts2[0]), $parts2[0]);
                       //rename value from $maxIndex. Before : "(1 space)value"
                       $subValue2 = substr($parts2[1][$maxIndex2], 1);
-                      $newurl2="http://sgsdata.adtech.de/59.1/0/cf/".$subValue.$subValue2."";
+                      $newurl2=$newurl.$subValue2."";
                       //print_r($newurl2);
                       $result3 = $this->get_web_page( $newurl2 );
 
@@ -157,11 +162,11 @@ class File extends Controller {
                       $page3 = $result3['content'];
                       if($result3==TRUE){
                           //create folder 
-                          if(!is_dir($dir .= "uploads/cf/".$subValue)){ 
+                          if(!is_dir($dir .= "uploads/".$table."/".$subValue)){ 
                             mkdir($dir, 0777, true);
                             chmod($dir, 0777);
                           }
-                          if(!is_dir($dir2 .= 'uploads/cf/'.$subValue.$subValue2)){  
+                          if(!is_dir($dir2 .= 'uploads/'.$table.'/'.$subValue.$subValue2)){  
                               mkdir($dir2, 0777, true);
                               chmod($dir2, 0777);
                           }
@@ -178,7 +183,7 @@ class File extends Controller {
                                   $subValue3 = substr($parts3[1][$i], 1);
                                   //upload files to storage
                                   //url to files
-                                  $newurl3="http://sgsdata.adtech.de/59.1/0/cf/".$subValue.$subValue2.$subValue3."";
+                                  $newurl3=$newurl2.$subValue3."";
                                   $subName = substr($subValue3,0,-3);
                                   //check if files already exist
                                   if(!is_file(getcwd()."/".$dir2.$subName)){
@@ -204,13 +209,14 @@ class File extends Controller {
                                   //overwrite index.txt
                                   $txt = $filenames."\n";
                                   fwrite($myfile, $txt);
-                                  echo '<pre>';
-                                  print_r($filenames);
-                                  echo '</pre>';
+                                  //echo '<pre>';
+                                  //print_r($filenames);
+                                  //echo '</pre>';
                                 }
                               }
                               //Parse files into Database
-                              $this->parse_cf($dir2);
+                              $parse='parse_'.$table;
+                              $this->$parse($dir2);
                           }
                       }
                   }
@@ -220,7 +226,6 @@ class File extends Controller {
   }
 
   public function parse_cf($dir2) {
-      //echo $dir2.$filenames;
       ini_set('max_execution_time', 68000); 
       @set_time_limit(68000);
 
@@ -411,129 +416,7 @@ class File extends Controller {
     } //end of while ($file = readdir ($handlefolder))
   }  //end of function
 
-  public function connect_ga()
-  {
-      //Read a web page and check for errors:
-      $url = "http://sgsdata.adtech.de/59.1/0/ga/";
-       
-      $result = $this->get_web_page( $url );
-
-      if ( $result['errno'] != 0 )
-          Message::set("error: bad url | timeout | redirect loop ...");
-
-      if ( $result['http_code'] != 200 )
-          Message::set("error: no page | no permissions | no service ");
-
-      $page = $result['content'];
-
-      if($result==TRUE){  
-          //explode
-          $str = $page;
-          $preg=preg_match_all('#<li><a.*?>(.*?)<\/a></li>#', $str, $parts);
-          if($preg==TRUE){
-              
-              //get the highest available array key          
-              $maxIndex = array_search(max($parts[0]), $parts[0]);
-              //rename value from $maxIndex. Before : "(1 space)value"
-              $subValue = substr($parts[1][$maxIndex], 1);
-              $newurl="http://sgsdata.adtech.de/59.1/0/ga/".$subValue."";
-              //print_r($newurl);
-
-              $result2 = $this->get_web_page( $newurl );
-
-              if ( $result2['errno'] != 0 )
-                  Message::set("error: bad url | timeout | redirect loop ...");
-
-              if ( $result2['http_code'] != 200 )
-                  Message::set("error: no page | no permissions | no service ");
-
-              $page2 = $result2['content'];
-
-              if($result2==TRUE){
-                  $str2 = $page2;
-                  $preg2=preg_match_all('#<li><a.*?>(.*?)<\/a></li>#', $str2, $parts2);
-                  if($preg2==TRUE){
-                      
-                      //get the highest available array key          
-                      $maxIndex2 = array_search(max($parts2[0]), $parts2[0]);
-                      //rename value from $maxIndex. Before : "(1 space)value"
-                      $subValue2 = substr($parts2[1][$maxIndex2], 1);
-                      $newurl2="http://sgsdata.adtech.de/59.1/0/ga/".$subValue.$subValue2."";
-                      //print_r($newurl2);
-                      $result3 = $this->get_web_page( $newurl2 );
-
-                      if ( $result3['errno'] != 0 )
-                          Message::set("error: bad url | timeout | redirect loop ...");
-
-                      if ( $result3['http_code'] != 200 )
-                          Message::set("error: no page | no permissions | no service ");
-
-                      $page3 = $result3['content'];
-                      if($result3==TRUE){
-                          //create folder 
-                          if(!is_dir($dir .= "uploads/ga/".$subValue)){ 
-                            mkdir($dir, 0777, true);
-                            chmod($dir, 0777);
-                          }
-                          if(!is_dir($dir2 .= 'uploads/ga/'.$subValue.$subValue2)){  
-                              mkdir($dir2, 0777, true);
-                              chmod($dir2, 0777);
-                          }
-                          //create index file
-                          $myfile = fopen($dir2."index.txt", "w") or die("Unable to open file!");
-
-                          $str3 = $page3;
-                          $preg3=preg_match_all('#<li><a.*?>(.*?)<\/a></li>#', $str3, $parts3);
-                          if($preg3==TRUE){
-                              //count summe of all files with array key
-                              $countArray = count($parts3[1]);
-                              for ($i = 1; $i < $countArray; $i++) {
-                                  //rename file. Before : "(1 space)filename"
-                                  $subValue3 = substr($parts3[1][$i], 1);
-                                  //upload files to storage
-                                  //url to files
-                                  $newurl3="http://sgsdata.adtech.de/59.1/0/ga/".$subValue.$subValue2.$subValue3."";
-                                  $subName = substr($subValue3,0,-3);
-                                  //check if files already exist
-                                  if(!is_file(getcwd()."/".$dir2.$subName)){
-                                    //check if files had been already parsed
-                                    if(!is_file(getcwd()."/".$dir2.$subName.".done")){
-                                      //download remote files
-                                      $this->download_remote_file_with_curl($newurl3, getcwd()."/".$dir2.$subValue3);
-                                      //check if uploaded file extention is gz
-                                      if (substr(getcwd()."/".$dir2.$subValue3, -3) !== '.gz') {
-                                            //rename
-                                            $filenames = $subValue3;
-                                      }else{
-                                            //Convert files(gz) to bin directly after put them in uploads directory
-                                            $this->convert(getcwd()."/".$dir2.$subValue3);
-                                            //rename
-                                            $filenames = substr($subValue3, 0, -3);
-                                            //delete gz file
-                                            unlink(getcwd()."/".$dir2.$subValue3);
-                                      }
-                                  }else{
-                                    $filenames = substr($subValue3, 0, -3);
-                                  } 
-                                  //overwrite index.txt
-                                  $txt = $filenames."\n";
-                                  fwrite($myfile, $txt);
-                                  echo '<pre>';
-                                  print_r($filenames);
-                                  echo '</pre>';
-                                }
-                              }
-                              //Parse files into Database
-                              $this->parse_ga($dir2);
-                          }
-                      }
-                  }
-              }
-          }
-      }
-  }
   public function parse_ga($dir2) {
-      //echo $dir2;
       ini_set('max_execution_time', 68000); 
       @set_time_limit(68000);
 
