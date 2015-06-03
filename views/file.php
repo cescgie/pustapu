@@ -66,4 +66,20 @@
       echo
       '</div> <!-- panel panel-default -->';               
   }  
+  //KV Information
+  if (!sizeof($data['sum_kv'])) {
+      echo 
+      '<div class="alert alert-info">No KV Data.</div>';
+  }else{
+      echo
+      '<div class="panel panel-default">
+          <!-- Default panel contents -->
+          <div class="panel-heading">KV</div>';
+          foreach ($data['sum_kv'] as $sum_kv){
+              echo 
+              '<p>'.$sum_kv['Summe_kv']. ' Records</p>';
+          }
+      echo
+      '</div> <!-- panel panel-default -->';               
+  } 
   ?>

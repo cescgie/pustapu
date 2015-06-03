@@ -45,5 +45,15 @@ class File_Model extends Model {
    public function summe_ir(){
       return $this->_db->select("SELECT count(*) as 'Summe_ir' from ir");
    }
+   //KV DB
+   public function all_kv() {
+      return $this->_db->select('SELECT * FROM kv ORDER BY id DESC LIMIT 0, 20');
+   }
+   public function _insert_kv($datas) {
+     $this->_db->insert('kv', $datas);
+   }
+   public function summe_kv(){
+      return $this->_db->select("SELECT count(*) as 'Summe_kv' from kv");
+   }
 
 }
