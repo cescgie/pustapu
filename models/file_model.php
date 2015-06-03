@@ -65,4 +65,14 @@ class File_Model extends Model {
    public function summe_kw(){
       return $this->_db->select("SELECT count(*) as 'Summe_kw' from kw");
    }
+   //TC DB
+   public function all_tc() {
+      return $this->_db->select('SELECT * FROM tc ORDER BY id DESC LIMIT 0, 20');
+   }
+   public function _insert_tc($datas) {
+     $this->_db->insert('tc', $datas);
+   }
+   public function summe_tc(){
+      return $this->_db->select("SELECT count(*) as 'Summe_tc' from tc");
+   }
 }
