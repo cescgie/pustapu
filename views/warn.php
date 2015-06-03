@@ -10,7 +10,7 @@
                        <div class="panel-heading">CF</div>';
                         foreach ($data['sum'] as $sum){
                           echo '<p> Summe of all Data : '.$sum['Summe'].'</p>
-                          		<p> Update at : '.$data['datum'].'</p>';
+                          		<p> Updated at : '.$data['datum'].'</p>';
                         }
                 echo
                       '</div> <!-- panel-heading -->
