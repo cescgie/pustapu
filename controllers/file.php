@@ -8,7 +8,16 @@ class File extends Controller {
 
    public function index() {
       $data['title'] = 'AdServer Daten';
+
+      $time_start = microtime(true);
+      /*
+      *Connect to server file, download files, convert,
+      *and parse them into to database
+      */
       $this->all_connection();
+      /*
+      *Intialize records
+      */
       $data['sum_cf'] = $this->_model->summe_cf();
       $data['sum_ga'] = $this->_model->summe_ga();
       $data['sum_gl'] = $this->_model->summe_gl();
@@ -16,26 +25,37 @@ class File extends Controller {
       $data['sum_kv'] = $this->_model->summe_kv();
       $data['sum_kw'] = $this->_model->summe_kw();
       $data['sum_tc'] = $this->_model->summe_tc();
+      
+      $time_end = microtime(true);
+
+      /*
+      *Set recent date & time
+      */
       $data['datum'] = date("Y-m-d H:i:s");
+
       /*
       *Set refresh-time As Session
-      *
-      *If there is no refresh-time or refresh-time is 10, 
-      *it will be unset and new refresh-time will be set up as 600.
-      *Else refresh-time will be set up as 10.
-      *This Session will be used in header.php.
+      *This Session will be used in header.php
       */
-      if((Session::get('refresh-time')) == '' || (Session::get('refresh-time')) == '10'){
-        session_unset();
-        Session::set('refresh-time','600');
-      }else{
-        session_unset();
-        Session::set('refresh-time','10');
-      } 
+      $time = $time_end - $time_start;
+      $this->set_session($time);
 
+      /*
+      *Call all views that will be show as index 
+      */
       $this->_view->render('header', $data);
       $this->_view->render('file', $data);
       $this->_view->render('footer');
+   }
+
+   public function set_session($time){
+      if($time>100){
+        session_unset();
+        Session::set('refresh-time','10');
+      }else{
+        session_unset();
+        Session::set('refresh-time','600');
+      }
    }
 
    public function all_connection(){
@@ -131,7 +151,6 @@ class File extends Controller {
   {
       //Read a web page and check for errors:
       $url = "http://sgsdata.adtech.de/59.1/0/".$table."/";
-      //echo $url;
       $result = $this->get_web_page( $url );
 
       if ( $result['errno'] != 0 )
@@ -153,7 +172,6 @@ class File extends Controller {
               //rename value from $maxIndex. Before : "(1 space)value"
               $subValue = substr($parts[1][$maxIndex], 1);
               $newurl=$url.$subValue."";
-              //print_r($newurl);
 
               $result2 = $this->get_web_page( $newurl );
 
@@ -175,7 +193,6 @@ class File extends Controller {
                       //rename value from $maxIndex. Before : "(1 space)value"
                       $subValue2 = substr($parts2[1][$maxIndex2], 1);
                       $newurl2=$newurl.$subValue2."";
-                      //print_r($newurl2);
                       $result3 = $this->get_web_page( $newurl2 );
 
                       if ( $result3['errno'] != 0 )
@@ -599,8 +616,8 @@ class File extends Controller {
     } // end of function
 
     public function parse_gl($dir2) {
-             ini_set('max_execution_time', 68000); 
-             @set_time_limit(68000);
+             ini_set('max_execution_time', 0); 
+             @set_time_limit(0);
 
              $debugTimeStart = microtime(true); 
 
@@ -759,10 +776,10 @@ class File extends Controller {
             };
             $debugTimeEnd = microtime(true);     
         }
-    }
+    }// end of function
     public function parse_ir($dir2) {
-             ini_set('max_execution_time', 68000); 
-             @set_time_limit(68000);
+             ini_set('max_execution_time', 0); 
+             @set_time_limit(0);
 
              $debugTimeStart = microtime(true); 
 
@@ -818,8 +835,6 @@ class File extends Controller {
           $code[$k]['accumulatedPointer'] = $rowPointer;
           $rowPointer += $code[$k]['size'];     
         };
-        
-
         /*
           size/length row
         */
@@ -828,8 +843,6 @@ class File extends Controller {
         foreach($code AS $k=>$v) {
           $rowSize += $code[$k]['size'];
         };
-        
-        
         /*
           errorcode
         */
@@ -890,7 +903,8 @@ class File extends Controller {
                };
               $debugTimeEnd = microtime(true); 
         } 
-    }
+    } // end of function
+
     public function parse_kv($dir2) {
              ini_set('max_execution_time', 0); 
              @set_time_limit(0);
@@ -1056,10 +1070,11 @@ class File extends Controller {
             };
             $debugTimeEnd = microtime(true); 
         }  
-    }
-     public function parse_kw($dir2) {
-             ini_set('max_execution_time', 68000); 
-             @set_time_limit(68000);
+    } // end of function
+
+    public function parse_kw($dir2) {
+             ini_set('max_execution_time', 0); 
+             @set_time_limit(0);
 
              $debugTimeStart = microtime(true); 
 
@@ -1192,10 +1207,11 @@ class File extends Controller {
             };
             $debugTimeEnd = microtime(true); 
         } 
-    }
+    } // end of function
+
     public function parse_tc($dir2) {
-             ini_set('max_execution_time', 68000); 
-             @set_time_limit(68000);
+             ini_set('max_execution_time', 0); 
+             @set_time_limit(0);
 
              $debugTimeStart = microtime(true); 
 
@@ -1354,5 +1370,5 @@ class File extends Controller {
               };
              $debugTimeEnd = microtime(true); 
         } 
-    }
-}
+    } // end of function
+} // end of class
