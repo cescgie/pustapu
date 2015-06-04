@@ -17,6 +17,21 @@ class File extends Controller {
       $data['sum_kw'] = $this->_model->summe_kw();
       $data['sum_tc'] = $this->_model->summe_tc();
       $data['datum'] = date("Y-m-d H:i:s");
+      /*
+      *Set refresh-time As Session
+      *
+      *If there is no refresh-time or refresh-time is 10, 
+      *it will be unset and new refresh-time will be set up as 600.
+      *Else refresh-time will be set up as 10.
+      *This Session will be used in header.php.
+      */
+      if((Session::get('refresh-time')) == '' || (Session::get('refresh-time')) == '10'){
+        session_unset();
+        Session::set('refresh-time','600');
+      }else{
+        session_unset();
+        Session::set('refresh-time','10');
+      } 
 
       $this->_view->render('header', $data);
       $this->_view->render('file', $data);
