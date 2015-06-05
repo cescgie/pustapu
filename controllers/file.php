@@ -9,14 +9,19 @@ class File extends Controller {
    public function index() {
       $data['title'] = 'AdServer Daten';
 
+      /*
+      *Start execute time
+      */
       $time_start = microtime(true);
+
       /*
       *Connect to server file, download files, convert,
-      *and parse them into to database
+      *and parse them into to database.
       */
       $this->all_connection();
+
       /*
-      *Intialize records
+      *Query for intialize records in database.
       */
       $data['sum_cf'] = $this->_model->summe_cf();
       $data['sum_ga'] = $this->_model->summe_ga();
@@ -25,33 +30,46 @@ class File extends Controller {
       $data['sum_kv'] = $this->_model->summe_kv();
       $data['sum_kw'] = $this->_model->summe_kw();
       $data['sum_tc'] = $this->_model->summe_tc();
-      
-      $time_end = microtime(true);
 
       /*
-      *Set recent date & time
+      *Set recent date & time.
       */
       $data['datum'] = date("Y-m-d H:i:s");
 
       /*
-      *Set refresh-time As Session
-      *This Session will be used in header.php
-      */
-      $time = $time_end - $time_start;
-      $this->set_session($time);
-
-      /*
       *Call all views that will be show as index 
       */
+      echo '__Session : '.Session::get('refresh-time').'__';
       $this->_view->render('header', $data);
       $this->_view->render('file', $data);
       $this->_view->render('footer');
+
+      /*
+      *End execute time
+      */
+      $time_end = microtime(true);
+      
+      /*
+      *Parameter $time has value executed time from parsing and query.
+      */
+      $time = $time_end - $time_start;
+      
+      /*
+      *Set refresh-time As Session.
+      *This Session will be used in header.php
+      */
+      $this->set_session($time);
    }
 
    public function set_session($time){
-      if($time>100){
+      /*
+      *if executed time longer than 60 seconds/ 1 minutes, 
+      *the next refresh-time will be 30 seconds,
+      *else will be set up as 600 seconds/ 10 minutes.
+      */
+      if($time>60){
         session_unset();
-        Session::set('refresh-time','10');
+        Session::set('refresh-time','60');
       }else{
         session_unset();
         Session::set('refresh-time','600');
