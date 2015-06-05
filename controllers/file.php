@@ -39,7 +39,6 @@ class File extends Controller {
       /*
       *Call all views that will be show as index 
       */
-      echo '__Session : '.Session::get('refresh-time').'__';
       $this->_view->render('header', $data);
       $this->_view->render('file', $data);
       $this->_view->render('footer');

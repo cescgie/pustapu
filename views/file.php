@@ -7,7 +7,7 @@
       '<div class="alert alert-info">No Cf Data.</div>';
   }else{
       echo
-      '<p> Updated at : '.$data['datum'].'</p>
+      '<p><span class="blink">Updated at : '.$data['datum'].'</span></p>
        <div class="panel panel-default">
           <!-- Default panel contents -->
           <div class="panel-heading">CF</div>';

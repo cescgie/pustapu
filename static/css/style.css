@@ -54,3 +54,18 @@
       border: 1px solid #D0D0D0;
       box-shadow: 0 0 8px #D0D0D0;
    }
+   /*Blink Text*/
+   @keyframes blink {  
+      0% { opacity: 1.0; }
+      50% { opacity: 0.0; }
+      100% { opacity: 1.0; }
+    }
+    @-webkit-keyframes blink {
+      0% { opacity: 1.0; }
+      50% { opacity: 0.0; }
+      100% { opacity: 1.0; }
+    }
+    .blink {
+      animation: blink 1s step-start 0s infinite;
+      -webkit-animation: blink 1s step-start 0s infinite;
+    }
