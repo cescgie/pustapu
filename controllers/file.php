@@ -7,7 +7,10 @@ class File extends Controller {
    }
 
    public function index() {
-      $data['title'] = 'AdServer Daten';
+      /*
+      *This will be used as page title.
+      */
+      $data['title'] = 'Adserverdaten';
 
       /*
       *Start execute time
@@ -35,7 +38,6 @@ class File extends Controller {
       *Set recent date & time.
       */
       $data['datum'] = date("Y-m-d H:i:s");
-
       /*
       *Call all views that will be show as index 
       */
@@ -68,7 +70,7 @@ class File extends Controller {
       */
       if($time>60){
         session_unset();
-        Session::set('refresh-time','60');
+        Session::set('refresh-time','30');
       }else{
         session_unset();
         Session::set('refresh-time','600');
@@ -76,6 +78,9 @@ class File extends Controller {
    }
 
    public function all_connection(){
+      /*
+      *Connect to each server file
+      */
       $this->connect('cf');
       $this->connect('gl');
       $this->connect('ir');
@@ -95,19 +100,17 @@ class File extends Controller {
             CURLOPT_CUSTOMREQUEST  =>"GET",        //set request type post or get
             CURLOPT_POST           =>false,        //set to GET
             CURLOPT_USERAGENT      => $user_agent, //set user agent
-            CURLOPT_COOKIEFILE     =>"cookie.txt", //set cookie file
-            CURLOPT_COOKIEJAR      =>"cookie.txt", //set cookie jar
             CURLOPT_RETURNTRANSFER => true,     // return web page
             CURLOPT_HEADER         => false,    // don't return headers
             CURLOPT_FOLLOWLOCATION => true,     // follow redirects
             CURLOPT_ENCODING       => "",       // handle all encodings
             CURLOPT_AUTOREFERER    => true,     // set referer on redirect
-            CURLOPT_CONNECTTIMEOUT => 120,      // timeout on connect
-            CURLOPT_TIMEOUT        => 120,      // timeout on response
+            CURLOPT_CONNECTTIMEOUT => 0,      // timeout on connect
+            CURLOPT_TIMEOUT        => 0,      // timeout on response
             CURLOPT_MAXREDIRS      => 10,       // stop after 10 redirects
          		CURLOPT_HTTPAUTH	   => CURLAUTH_ANY,
   			    CURLOPT_USERPWD		   => "$username:$password",
-		);
+		    );
 
         $ch      = curl_init( $url );
         curl_setopt_array( $ch, $options );
@@ -268,21 +271,18 @@ class File extends Controller {
                                   //overwrite index.txt
                                   $txt = $filenames."\n";
                                   fwrite($myfile, $txt);
-                                  //echo '<pre>';
-                                  //print_r($filenames);
-                                  //echo '</pre>';
                                 }
                               }
                               //Parse files into Database
                               $parse='parse_'.$table;
                               $this->$parse($dir2);
-                          }
-                      }
-                  }
-              }
-          }
-      }
-  }
+                          } // end of 'if($preg3==TRUE)'
+                      } // enc of 'if($result3==TRUE)'
+                  } // end of 'if($preg2==TRUE)'
+              } // end of 'if($result2==TRUE)'
+          } // end of 'if($preg==TRUE)'
+      } // end of 'if($result==TRUE)'
+  } // end of function
 
   public function parse_cf($dir2) {
       ini_set('max_execution_time', 0); 
