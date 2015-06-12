@@ -69,10 +69,10 @@ class File extends Controller {
       *else will be set up as 600 seconds/ 10 minutes.
       */
       if($time>60){
-        session_unset();
+        Session::clear('refresh-time');
         Session::set('refresh-time','30');
       }else{
-        session_unset();
+        Session::clear('refresh-time');
         Session::set('refresh-time','600');
       }
    }

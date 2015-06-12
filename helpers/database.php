@@ -63,4 +63,25 @@ class Database extends PDO {
 		return $this->exec("DELETE FROM $table WHERE $where LIMIT $limit");
 	}
 
+	public function select2($table, $where, $array = array(), $fetchMode = PDO::FETCH_ASSOC) {
+		ksort($where);
+		
+		$fieldDetails = NULL;
+		$i = 0;
+		foreach($where as $key => $value) {
+			if ($i == 0) {
+				$fieldDetails .= "$key = :$key";
+			}
+			else {
+				$fieldDetails .= " AND $key = :$key";
+			}
+			$i++;
+		}
+		$stmt = $this->prepare("SELECT * FROM $table WHERE $fieldDetails");
+		foreach($where as $key => $value) {
+			$stmt->bindValue(":$key", $value);
+		}
+		$stmt->execute();
+		return $stmt->fetch($fetchMode);
+	}
 }

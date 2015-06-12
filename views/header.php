@@ -1,3 +1,7 @@
+<?php
+// Start the session
+session_start();
+?>
 <!doctype html>
 <html>
 <head>
@@ -9,6 +13,7 @@
 </head>
 <body>
    <div class="container">
+   	<?php echo 'Session_'.Session::get('username');?>
       <br>
       <div class="btn-group btn-group-justified" role="group" aria-label="...">
         <div class="btn-group" role="group">
