@@ -21,7 +21,7 @@ class File extends Controller {
       *Connect to server file, download files, convert,
       *and parse them into to database.
       */
-      if (Session::get('username')){
+      if (Session::get('username')&&Session::get('username')=='admin'){
         $this->all_connection();
       }
       /*

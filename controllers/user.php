@@ -22,7 +22,7 @@ class User extends Controller {
 	  }
 	  else
 	  {
-		Message::set('You are already logged as '.Session::get('username'));
+		Message::set('You are already logged in as '.Session::get('username'));
 		$this->index();
 		Message::show();
 	  }
@@ -42,7 +42,7 @@ class User extends Controller {
 					$domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;
 					echo $domain;
 					Session::set('username',$data['username']);
-					Message::set('You are logged as '.Session::get('username').'');
+					Message::set('You are logged in as '.Session::get('username').'');
 				}
 				else {
 					Message::set('Wrong password');
@@ -55,7 +55,7 @@ class User extends Controller {
 			Message::set('You have to fill all requiered fields');}
 	  }
 	  else{
-		Message::set('You are already logged as '.Session::get('username'));
+		Message::set('You are already logged in as '.Session::get('username'));
 	  }
 	  $this->index();    
 	  Message::show();
