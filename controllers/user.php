@@ -22,7 +22,7 @@ class User extends Controller {
 	  }
 	  else
 	  {
-		Message::set('Sie sind bereits eingeloggt');
+		Message::set('You are already logged as '.Session::get('username'));
 		$this->index();
 		Message::show();
 	  }

@@ -21,8 +21,9 @@ class File extends Controller {
       *Connect to server file, download files, convert,
       *and parse them into to database.
       */
-      //$this->all_connection();
-
+      if (Session::get('username')){
+        $this->all_connection();
+      }
       /*
       *Query for intialize records in database.
       */
