@@ -15,7 +15,7 @@ class User extends Controller {
 	  if (!Session::get('username') || Session::get('username') == '')
 	  {
 		$data['title'] = 'Login';
-		$data['form_header'] = 'Login';
+		$data['form_header'] = 'Login Form';
 		$this->_view->render('header', $data);
 		$this->_view->render('user', $data);
 		$this->_view->render('footer');

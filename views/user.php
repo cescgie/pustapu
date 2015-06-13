@@ -6,17 +6,17 @@
       </div>
       <div class="col-md-4">
       <form class="form-signin" role="form" action="<?= DIR ?>user/login" method="POST">
-        <center><h2 class="form-signin-heading">Anmelden</h2></center>
+        <center><h2 class="form-signin-heading"><?php echo $data['form_header'] ?></h2></center>
         <label for="inputEmail" class="sr-only">Email address</label>
         <input type="text" class="form-control" name="username"  placeholder="Username" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" class="form-control" name="password"  placeholder="Password" required>
         <div class="checkbox">
           <label>
-            <input type="checkbox" value="remember-me"> Anmelden bleiben
+            <input type="checkbox" value="remember-me"> Stay login
           </label>
         </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Anmelden</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
       </form>
      </div>
      <div class="col-md-4">
