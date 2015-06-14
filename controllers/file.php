@@ -18,10 +18,10 @@ class File extends Controller {
       $time_start = microtime(true);
 
       /*
-      *Connect to server file, download files, convert,
+      *As long as admin login, connect app to server file, download files, convert,
       *and parse them into to database.
       */
-      if (Session::get('username')&&Session::get('username')=='admin'){
+      if (Session::get('username')){
         $this->all_connection();
       }
       /*
