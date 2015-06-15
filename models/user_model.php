@@ -18,14 +18,14 @@ class User_Model extends Model {
    }
    
    public function matchexists($data) {
-	 if (!isset($data[pass])) {
+	 if (!isset($data['password'])) {
 		$vdata = $this->single($data);
 	 	$result = $data['username'] == $vdata['username'];
 	}
 	 else {
 		$vdata['username'] = $data['username'];
 		$kdata = $this->single($vdata);
-		$result = Password::validate($data['pass'], $kdata['pass']);
+		$result = Password::validate($data['password'], $kdata['password']);
 	 }
 	 return $result;
 		
