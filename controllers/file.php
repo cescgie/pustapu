@@ -1342,12 +1342,10 @@ class File extends Controller {
                         $datas['VersionId'] = $tmpObject[0];
                         $datas['SequenceId'] = $tmpObject[1];
                         $datas['PlcNetworkId'] = $tmpObject[2];
-                        $datas['PlcSubNetworkId'] = $tmpObject[3];
                         $datas['WebsiteId'] =$tmpObject[4];
                         $datas['PlacementId'] =$tmpObject[5];
                         $datas['PageId'] = $tmpObject[6];
                         $datas['CmgnNetworkId'] =$tmpObject[7];
-                        $datas['CmgnSubNetworkId'] = $tmpObject[8];
                         $datas['CampaignId'] =$tmpObject[9];
                         $datas['MasterCampaignId'] =$tmpObject[10];
                         $datas['BannerId'] =$tmpObject[11];
@@ -1358,13 +1356,9 @@ class File extends Controller {
                         $datas['IpAddress'] =$tmpObject[16];
                         $datas['UserId'] =$tmpObject[17];
                         $datas['OsId'] =$tmpObject[18];
-                        $datas['TagType'] =$tmpObject[19];
                         $datas['BrowserId'] =$tmpObject[20];
                         $datas['BrowserLanguage'] =$tmpObject[21];
                         $datas['TLDId'] =$tmpObject[22];
-                        $datas['MediaTypeId'] =$tmpObject[23];
-                        $datas['PlcContentTypeId'] = $tmpObject[24];
-                        $datas['Reserved2'] = $tmpObject[25];
                         $datas['DateEntered'] =$tmpObject[26];
                         $datas['Hour'] =$tmpObject[27];
                         $datas['Minute'] =$tmpObject[28];
