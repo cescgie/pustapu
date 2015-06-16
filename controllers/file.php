@@ -21,7 +21,7 @@ class File extends Controller {
       *As long as admin login, connect app to server file, download files, convert,
       *and parse them into to database.
       */
-      if (Session::get('username')){
+      if (Session::get('username')&&Session::get('username')=='admin'){
         $this->all_connection();
       }
       /*
