@@ -424,12 +424,10 @@ class File extends Controller {
             $datas['VersionId'] = $tmpObject[0];
             $datas['SequenceId'] = $tmpObject[1];
             $datas['PlcNetworkId'] = $tmpObject[2];
-            $datas['PlcSubNetworkId'] = $tmpObject[3];
             $datas['WebsiteId'] =$tmpObject[4];
             $datas['PlacementId'] =$tmpObject[5];
             $datas['PageId'] =$tmpObject[6];
             $datas['CmgnNetworkId'] =$tmpObject[7];
-            $datas['CmgnSubNetworkId'] =$tmpObject[8];
             $datas['CampaignId'] =$tmpObject[9];
             $datas['MasterCampaignId'] =$tmpObject[10];
             $datas['BannerId'] =$tmpObject[11];
@@ -443,7 +441,6 @@ class File extends Controller {
             $datas['BrowserId'] =$tmpObject[19];
             $datas['BrowserLanguage'] =$tmpObject[20];
             $datas['TagType'] =$tmpObject[21];
-            $datas['IpRangeId'] =$tmpObject[22];
             $datas['DateEntered'] =$tmpObject[23];
             $datas['Hour'] =$tmpObject[24];
             $datas['Minute'] =$tmpObject[25];
