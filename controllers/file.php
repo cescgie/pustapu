@@ -28,13 +28,19 @@ class File extends Controller {
       *Query for intialize records in database.
       */
       $data['sum_cf'] = $this->_model->summe_cf();
+      //ga query
       $data['sum_ga'] = $this->_model->summe_ga();
+      $data['all_ip'] = $this->_model->all_ip();
+      $data['ip'] = count($data['all_ip']);
+      $data['all_user'] = $this->_model->all_user();
+      $data['user'] = count($data['all_user']);
+      
       $data['sum_gl'] = $this->_model->summe_gl();
       $data['sum_ir'] = $this->_model->summe_ir();
       $data['sum_kv'] = $this->_model->summe_kv();
       $data['sum_kw'] = $this->_model->summe_kw();
       $data['sum_tc'] = $this->_model->summe_tc();
-
+      
       /*
       *Set recent date & time.
       */

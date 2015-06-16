@@ -30,6 +30,9 @@
           foreach ($data['sum_ga'] as $sum_ga){
               echo 
               '<p>'.$sum_ga['Summe_ga']. ' Records</p>';
+              echo 
+               '<p>'.$data['ip'].' Unique IpAddress</p>
+                <p>'.$data['user'].' Unique Users</p>';
           }
       echo
       '</div> <!-- panel panel-default -->';               
