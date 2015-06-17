@@ -30,11 +30,11 @@ class File extends Controller {
       $data['sum_cf'] = $this->_model->summe_cf();
       //ga query
       $data['sum_ga'] = $this->_model->summe_ga();
-      $data['all_ip'] = $this->_model->all_ip();
-      $data['ip'] = count($data['all_ip']);
-      $data['all_user'] = $this->_model->all_user();
-      $data['user'] = count($data['all_user']);
-      
+      /*$data['all_ip_ga'] = $this->_model->all_ip_ga();
+      $data['ip_ga'] = count($data['all_ip_ga']);
+      $data['all_user_ga'] = $this->_model->all_user_ga();
+      $data['user_ga'] = count($data['all_user_ga']);
+      */
       $data['sum_gl'] = $this->_model->summe_gl();
       $data['sum_ir'] = $this->_model->summe_ir();
       $data['sum_kv'] = $this->_model->summe_kv();

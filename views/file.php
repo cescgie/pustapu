@@ -31,8 +31,8 @@
               echo 
               '<p>'.$sum_ga['Summe_ga']. ' Records</p>';
               echo 
-               '<p>'.$data['ip'].' Unique IpAddress</p>
-                <p>'.$data['user'].' Unique Users</p>';
+               '<p>'.$data['ip_ga'].' Unique IpAddress</p>
+                <p>'.$data['user_ga'].' Unique Users</p>';
           }
       echo
       '</div> <!-- panel panel-default -->';               

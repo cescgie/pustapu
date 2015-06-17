@@ -25,10 +25,10 @@ class File_Model extends Model {
    public function summe_ga(){
       return $this->_db->select("SELECT count(*) as 'Summe_ga' from ga");
    }
-    public function all_ip(){
+    public function all_ip_ga(){
       return $this->_db->select("SELECT IpAddress,count(IpAddress) as Summe FROM ga GROUP BY IpAddress HAVING count(*) >1 ORDER BY count(*) DESC");
    }
-   public function all_user(){
+   public function all_user_ga(){
       return $this->_db->select("SELECT UserId,count(UserId) as Summe FROM ga GROUP BY UserId HAVING count(*) >1 ORDER BY count(*) DESC");
    }
    //GL DB
