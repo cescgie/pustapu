@@ -42,5 +42,25 @@
 		<script src="<?= URL::SCRIPTS('jquery-2.0.3.min') ?>"></script>
 		<script src="<?= URL::SCRIPTS('jquery') ?>"></script>
 		<script src="<?= URL::SCRIPTS('bootstrap.min') ?>"></script>
+    <script type="text/javascript">
+      setInterval(function() {
+        $.ajax({ url: '/testkap/connect',
+           type: 'get',
+           success: function(output) {
+              var table = output.split("-");
+              $(".cf").html("<p style='color: #ff0000'> "+ table[0] +" </p>");
+              $(".ga").html("<p style='color: #ff0000'> "+ table[1] +" </p>");
+              $(".gl").html("<p style='color: #ff0000'> "+ table[2] +" </p>");
+              $(".ir").html("<p style='color: #ff0000'> "+ table[3] +" </p>");
+              $(".kv").html("<p style='color: #ff0000'> "+ table[4] +" </p>");
+              $(".kw").html("<p style='color: #ff0000'> "+ table[5] +" </p>");
+              $(".tc").html("<p style='color: #ff0000'> "+ table[6] +" </p>");
+
+              console.log(output);
+              console.log("done");
+             }
+          });
+      }, 10000); //10 seconds
+    </script>
 	</body>
 </html>

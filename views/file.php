@@ -13,7 +13,7 @@
           <div class="panel-heading">CF</div>';
           foreach ($data['sum_cf'] as $sum){
              echo 
-            '<p>'.$sum['Summe_cf']. ' Records</p>';
+            '<p class="cf">'.$sum['Summe_cf']. ' Records</p>';
           }
       echo
       '</div> <!-- panel panel-default -->'; 
@@ -29,7 +29,7 @@
           <div class="panel-heading">GA</div>';
           foreach ($data['sum_ga'] as $sum_ga){
               echo 
-              '<p>'.$sum_ga['Summe_ga']. ' Records</p>';
+              '<p class="ga">'.$sum_ga['Summe_ga']. ' Records</p>';
               /*echo 
                '<p>'.$data['ip_ga'].' Unique IpAddress</p>
                 <p>'.$data['user_ga'].' Unique Users</p>';*/
@@ -48,7 +48,7 @@
           <div class="panel-heading">GL</div>';
           foreach ($data['sum_gl'] as $sum_gl){
               echo 
-              '<p>'.$sum_gl['Summe_gl']. ' Records</p>';
+              '<p class="gl">'.$sum_gl['Summe_gl']. ' Records</p>';
           }
       echo
       '</div> <!-- panel panel-default -->';               
@@ -64,7 +64,7 @@
           <div class="panel-heading">IR</div>';
           foreach ($data['sum_ir'] as $sum_ir){
               echo 
-              '<p>'.$sum_ir['Summe_ir']. ' Records</p>';
+              '<p class="ir">'.$sum_ir['Summe_ir']. ' Records</p>';
           }
       echo
       '</div> <!-- panel panel-default -->';               
@@ -80,7 +80,7 @@
           <div class="panel-heading">KV</div>';
           foreach ($data['sum_kv'] as $sum_kv){
               echo 
-              '<p>'.$sum_kv['Summe_kv']. ' Records</p>';
+              '<p class="kv">'.$sum_kv['Summe_kv']. ' Records</p>';
           }
       echo
       '</div> <!-- panel panel-default -->';               
@@ -96,7 +96,7 @@
           <div class="panel-heading">KW</div>';
           foreach ($data['sum_kw'] as $sum_kw){
               echo 
-              '<p>'.$sum_kw['Summe_kw']. ' Records</p>';
+              '<p class="kw">'.$sum_kw['Summe_kw']. ' Records</p>';
           }
       echo
       '</div> <!-- panel panel-default -->';               
@@ -112,7 +112,7 @@
           <div class="panel-heading">TC</div>';
           foreach ($data['sum_tc'] as $sum_tc){
               echo 
-              '<p>'.$sum_tc['Summe_tc']. ' Records</p>';
+              '<p class="tc">'.$sum_tc['Summe_tc']. ' Records</p>';
           }
       echo
       '</div> <!-- panel panel-default -->';               

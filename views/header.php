@@ -13,5 +13,4 @@ session_start();
 </head>
 <body>
    <div class="container">
-   	<?php echo 'Session_'.Session::get('username');?>
       <hr>
