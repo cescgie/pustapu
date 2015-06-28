@@ -43,6 +43,7 @@
 		<script src="<?= URL::SCRIPTS('jquery') ?>"></script>
 		<script src="<?= URL::SCRIPTS('bootstrap.min') ?>"></script>
     <script type="text/javascript">
+      var i = 0;
       setInterval(function() {
         $.ajax({ url: '/testkap/connect',
            type: 'get',
@@ -57,7 +58,7 @@
               $(".tc").html("<p style='color: #ff0000'> "+ table[6] +" </p>");
 
               console.log(output);
-              console.log("done");
+              console.log("done"+i++);
              }
           });
       }, 10000); //10 seconds

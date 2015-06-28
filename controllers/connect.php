@@ -352,82 +352,89 @@ class Connect extends Controller {
       $handlefolder = opendir (getcwd()."/".$dir2);
       while ($file = readdir ($handlefolder)) {
         if (substr($file, -4) == '.bin') {
-          $handle = fopen(getcwd()."/".$dir2.$file, 'rb');
-          while ($contents = fread($handle, $rowSize)) {
-            $tmpObject = array();
-            for ($i=0; $i<$rowLength; $i++) {
-                           
-            $data = unpack($code[$i]['code'], substr($contents, $code[$i]['accumulatedPointer'], $code[$i]['size']));      
-            $data = $data[1];
-                            
-            if ($code[$i]['name'] == 'IpAddress') {
-              $data = (255 & ($data >> 24)).'.'.(255 & ($data >> 16)).'.'.(255 & $data>>8).'.'.(255 & $data);       
-            } elseif ($code[$i]['name'] == 'UserId') {
-              $user = '';
-              for ($ii=0; $ii<strlen($data); $ii++) {
-                 $userTmp = ord($data[$ii]);
-                 $user = $user.dechex ((15 & ($userTmp >> 4))).dechex (15 & $userTmp);
-              };
-              $data = $user;    
+          //Check if records already exists
+          $check_record = $this->_model->check_cf($file);
+          //echo $check_record['0']['mycheck'];
+          if($check_record['0']['mycheck'] == 0){
+            //0 means no record
+            //Input records to database
+            $handle = fopen(getcwd()."/".$dir2.$file, 'rb');
+            while ($contents = fread($handle, $rowSize)) {
+              $tmpObject = array();
+              for ($i=0; $i<$rowLength; $i++) {
+                             
+              $data = unpack($code[$i]['code'], substr($contents, $code[$i]['accumulatedPointer'], $code[$i]['size']));      
+              $data = $data[1];
                               
-             } elseif ($data < 0) {        // AND $code[$i]['type'] == 'unsignedint'
-                if (!in_array($data, $errorcode))
-                  $data = substr(bcsub($data*-1, 4294967296), 1);     
-             };
-             $tmpObject[$i] = $data;    
-             if ($i == 36) {
-                    $contents = fread($handle, $tmpObject[36]);
-                    $data = unpack('a'.$tmpObject[36], $contents);            
-                    $data = explode("\0", $data[1]);
-                    $tmpObject[37] = $data[0];      
-                    $tmpObject[38] = $data[1];      
-                    $tmpObject[39] = $data[2];      
-                    $tmpObject[40] = $data[3];                   
-              };
-            }; //end of for ($i=0; $i<$rowLength; $i++) {
-            $datas['VersionId'] = $tmpObject[0];
-            $datas['SequenceId'] = $tmpObject[1];
-            $datas['PlcNetworkId'] = $tmpObject[2];
-            $datas['WebsiteId'] =$tmpObject[4];
-            $datas['PlacementId'] =$tmpObject[5];
-            $datas['PageId'] =$tmpObject[6];
-            $datas['CmgnNetworkId'] =$tmpObject[7];
-            $datas['CampaignId'] =$tmpObject[9];
-            $datas['MasterCampaignId'] =$tmpObject[10];
-            $datas['BannerId'] =$tmpObject[11];
-            $datas['BannerNumber'] =$tmpObject[12];
-            $datas['PaymentId'] =$tmpObject[13];
-            $datas['StateId'] =$tmpObject[14];
-            $datas['CountTypeId'] =$tmpObject[15];
-            $datas['IpAddress'] =$tmpObject[16];
-            $datas['UserId'] =$tmpObject[17];
-            $datas['OsId'] =$tmpObject[18];
-            $datas['BrowserId'] =$tmpObject[19];
-            $datas['BrowserLanguage'] =$tmpObject[20];
-            $datas['TagType'] =$tmpObject[21];
-            $datas['DateEntered'] =$tmpObject[23];
-            $datas['Hour'] =$tmpObject[24];
-            $datas['Minute'] =$tmpObject[25];
-            $datas['Second'] =$tmpObject[26];
-            $datas['AdServerIp'] =$tmpObject[27];
-            $datas['AdServerFarmId'] =$tmpObject[28];
-            $datas['DMAId'] =$tmpObject[29];
-            $datas['CountryId'] =$tmpObject[30];
-            $datas['ZipCodeId'] =$tmpObject[31];
-            $datas['CityId'] =$tmpObject[32];
-            $datas['IspId'] =$tmpObject[33];
-            $datas['ConnectionTypeId'] =$tmpObject[34];
-            $datas['RecordSize'] =$tmpObject[35];
-            $datas['sizeStringBuffer'] =$tmpObject[36];
-            $datas['Referer'] =$tmpObject[37];
-            $datas['QueryString'] =$tmpObject[38];
-            $datas['LinkUrl'] =$tmpObject[39];
-            $datas['UserAgent'] =$tmpObject[40];
-            $datas['in_bin'] = $file;
-            //insert to database
-            $this->_model->_insert_cf($datas);
-        }; //end of while ($contents = fread($handle, $rowSize))
-         
+              if ($code[$i]['name'] == 'IpAddress') {
+                $data = (255 & ($data >> 24)).'.'.(255 & ($data >> 16)).'.'.(255 & $data>>8).'.'.(255 & $data);       
+              } elseif ($code[$i]['name'] == 'UserId') {
+                $user = '';
+                for ($ii=0; $ii<strlen($data); $ii++) {
+                   $userTmp = ord($data[$ii]);
+                   $user = $user.dechex ((15 & ($userTmp >> 4))).dechex (15 & $userTmp);
+                };
+                $data = $user;    
+                                
+               } elseif ($data < 0) {        // AND $code[$i]['type'] == 'unsignedint'
+                  if (!in_array($data, $errorcode))
+                    $data = substr(bcsub($data*-1, 4294967296), 1);     
+               };
+               $tmpObject[$i] = $data;    
+               if ($i == 36) {
+                      $contents = fread($handle, $tmpObject[36]);
+                      $data = unpack('a'.$tmpObject[36], $contents);            
+                      $data = explode("\0", $data[1]);
+                      $tmpObject[37] = $data[0];      
+                      $tmpObject[38] = $data[1];      
+                      $tmpObject[39] = $data[2];      
+                      $tmpObject[40] = $data[3];                   
+                };
+              }; //end of for ($i=0; $i<$rowLength; $i++) {
+              $datas['VersionId'] = $tmpObject[0];
+              $datas['SequenceId'] = $tmpObject[1];
+              $datas['PlcNetworkId'] = $tmpObject[2];
+              $datas['WebsiteId'] =$tmpObject[4];
+              $datas['PlacementId'] =$tmpObject[5];
+              $datas['PageId'] =$tmpObject[6];
+              $datas['CmgnNetworkId'] =$tmpObject[7];
+              $datas['CampaignId'] =$tmpObject[9];
+              $datas['MasterCampaignId'] =$tmpObject[10];
+              $datas['BannerId'] =$tmpObject[11];
+              $datas['BannerNumber'] =$tmpObject[12];
+              $datas['PaymentId'] =$tmpObject[13];
+              $datas['StateId'] =$tmpObject[14];
+              $datas['CountTypeId'] =$tmpObject[15];
+              $datas['IpAddress'] =$tmpObject[16];
+              $datas['UserId'] =$tmpObject[17];
+              $datas['OsId'] =$tmpObject[18];
+              $datas['BrowserId'] =$tmpObject[19];
+              $datas['BrowserLanguage'] =$tmpObject[20];
+              $datas['TagType'] =$tmpObject[21];
+              $datas['DateEntered'] =$tmpObject[23];
+              $datas['Hour'] =$tmpObject[24];
+              $datas['Minute'] =$tmpObject[25];
+              $datas['Second'] =$tmpObject[26];
+              $datas['AdServerIp'] =$tmpObject[27];
+              $datas['AdServerFarmId'] =$tmpObject[28];
+              $datas['DMAId'] =$tmpObject[29];
+              $datas['CountryId'] =$tmpObject[30];
+              $datas['ZipCodeId'] =$tmpObject[31];
+              $datas['CityId'] =$tmpObject[32];
+              $datas['IspId'] =$tmpObject[33];
+              $datas['ConnectionTypeId'] =$tmpObject[34];
+              $datas['RecordSize'] =$tmpObject[35];
+              $datas['sizeStringBuffer'] =$tmpObject[36];
+              $datas['Referer'] =$tmpObject[37];
+              $datas['QueryString'] =$tmpObject[38];
+              $datas['LinkUrl'] =$tmpObject[39];
+              $datas['UserAgent'] =$tmpObject[40];
+              $datas['in_bin'] = $file;
+              //insert to database
+              $this->_model->_insert_cf($datas);
+          }; //end of while ($contents = fread($handle, $rowSize))
+        }
+
          //rename bin folder in path uploads/ 
          @fclose($handle);
          @chmod(getcwd()."/".$dir2.$file, 0666);
@@ -524,68 +531,75 @@ class Connect extends Controller {
         $handlefolder = opendir (getcwd()."/".$dir2);
         while ($file = readdir ($handlefolder)) {
           if (substr($file, -4) == '.bin') {
-            $handle = fopen(getcwd()."/".$dir2.$file, 'rb');
-            while ($contents = fread($handle, $rowSize)) {
-                $tmpObject = array();
-                for ($i=0; $i<$rowLength; $i++) {
-                           $data = unpack($code[$i]['code'], substr($contents, $code[$i]['accumulatedPointer'], $code[$i]['size']));         
-                           $data = $data[1];
-                           
-                           if ($code[$i]['name'] == 'IpAddress') {
-                              $data = (255 & ($data >> 24)).'.'.(255 & ($data >> 16)).'.'.(255 & $data>>8).'.'.(255 & $data);          
-                           } elseif ($code[$i]['name'] == 'UserId') {
-                              $user = '';
-                              for ($ii=0; $ii<strlen($data); $ii++) {
-                                 $userTmp = ord($data[$ii]);
-                                 $user = $user.dechex ((15 & ($userTmp >> 4))).dechex (15 & $userTmp);
-                              };
-                              $data = $user;    
-                              
-                           } elseif ($data < 0) {           // AND $code[$i]['type'] == 'unsignedint'
-                              if (!in_array($data, $errorcode))
-                                 $data = substr(bcsub($data*-1, 4294967296), 1);       
-                           };
-                           $tmpObject[$i] = $data;
+            //Check if records already exists
+            $check_record = $this->_model->check_ga($file);
+            //echo $check_record['0']['mycheck'];
+            if($check_record['0']['mycheck'] == 0){
+              //0 means no record
+              //Input records to database
+              $handle = fopen(getcwd()."/".$dir2.$file, 'rb');
+              while ($contents = fread($handle, $rowSize)) {
+                  $tmpObject = array();
+                  for ($i=0; $i<$rowLength; $i++) {
+                             $data = unpack($code[$i]['code'], substr($contents, $code[$i]['accumulatedPointer'], $code[$i]['size']));         
+                             $data = $data[1];
+                             
+                             if ($code[$i]['name'] == 'IpAddress') {
+                                $data = (255 & ($data >> 24)).'.'.(255 & ($data >> 16)).'.'.(255 & $data>>8).'.'.(255 & $data);          
+                             } elseif ($code[$i]['name'] == 'UserId') {
+                                $user = '';
+                                for ($ii=0; $ii<strlen($data); $ii++) {
+                                   $userTmp = ord($data[$ii]);
+                                   $user = $user.dechex ((15 & ($userTmp >> 4))).dechex (15 & $userTmp);
+                                };
+                                $data = $user;    
+                                
+                             } elseif ($data < 0) {           // AND $code[$i]['type'] == 'unsignedint'
+                                if (!in_array($data, $errorcode))
+                                   $data = substr(bcsub($data*-1, 4294967296), 1);       
+                             };
+                             $tmpObject[$i] = $data;
 
-                  }; 
-                        $datas['VersionId'] = $tmpObject[0];
-                        $datas['SequenceId'] = $tmpObject[1];
-                        $datas['PlcNetworkId'] = $tmpObject[2];
-                        $datas['WebsiteId'] =$tmpObject[4];
-                        $datas['PlacementId'] =$tmpObject[5];
-                        $datas['CmgnNetworkId'] =$tmpObject[7];
-                        $datas['CampaignId'] =$tmpObject[9];
-                        $datas['MasterCampaignId'] =$tmpObject[10];
-                        $datas['BannerId'] =$tmpObject[11];
-                        $datas['BannerNumber'] =$tmpObject[12];
-                        $datas['PaymentId'] =$tmpObject[13];
-                        $datas['StateId'] =$tmpObject[14];
-                        $datas['AreaCodeId'] =$tmpObject[15];
-                        $datas['IpAddress'] =$tmpObject[16];
-                        $datas['UserId'] =$tmpObject[17];
-                        $datas['OsId'] =$tmpObject[18];
-                        $datas['TagType'] =$tmpObject[19];
-                        $datas['BrowserId'] =$tmpObject[20];
-                        $datas['BrowserLanguage'] =$tmpObject[21];
-                        $datas['TLDId'] =$tmpObject[22];
-                        $datas['MediaTypeId'] =$tmpObject[23];
-                        $datas['DateEntered'] =$tmpObject[26];
-                        $datas['Hour'] =$tmpObject[27];
-                        $datas['Minute'] =$tmpObject[28];
-                        $datas['Second'] =$tmpObject[29];
-                        $datas['AdServerIp'] =$tmpObject[30];
-                        $datas['AdServerFarmId'] =$tmpObject[31];
-                        $datas['DMAId'] =$tmpObject[32];
-                        $datas['CountryId'] =$tmpObject[33];
-                        $datas['ZipCodeId'] =$tmpObject[34];
-                        $datas['CityId'] =$tmpObject[35];
-                        $datas['IspId'] =$tmpObject[36];
-                        $datas['CountTypeId'] =$tmpObject[37];
-                        $datas['ConnectionTypeId'] =$tmpObject[38];
-                        $datas['in_bin'] = $file;
-                        $this->_model->_insert_ga($datas);
-            };//end of while ($contents = fread($handle, $rowSize)) 
+                        }; 
+                          $datas['VersionId'] = $tmpObject[0];
+                          $datas['SequenceId'] = $tmpObject[1];
+                          $datas['PlcNetworkId'] = $tmpObject[2];
+                          $datas['WebsiteId'] =$tmpObject[4];
+                          $datas['PlacementId'] =$tmpObject[5];
+                          $datas['CmgnNetworkId'] =$tmpObject[7];
+                          $datas['CampaignId'] =$tmpObject[9];
+                          $datas['MasterCampaignId'] =$tmpObject[10];
+                          $datas['BannerId'] =$tmpObject[11];
+                          $datas['BannerNumber'] =$tmpObject[12];
+                          $datas['PaymentId'] =$tmpObject[13];
+                          $datas['StateId'] =$tmpObject[14];
+                          $datas['AreaCodeId'] =$tmpObject[15];
+                          $datas['IpAddress'] =$tmpObject[16];
+                          $datas['UserId'] =$tmpObject[17];
+                          $datas['OsId'] =$tmpObject[18];
+                          $datas['TagType'] =$tmpObject[19];
+                          $datas['BrowserId'] =$tmpObject[20];
+                          $datas['BrowserLanguage'] =$tmpObject[21];
+                          $datas['TLDId'] =$tmpObject[22];
+                          $datas['MediaTypeId'] =$tmpObject[23];
+                          $datas['DateEntered'] =$tmpObject[26];
+                          $datas['Hour'] =$tmpObject[27];
+                          $datas['Minute'] =$tmpObject[28];
+                          $datas['Second'] =$tmpObject[29];
+                          $datas['AdServerIp'] =$tmpObject[30];
+                          $datas['AdServerFarmId'] =$tmpObject[31];
+                          $datas['DMAId'] =$tmpObject[32];
+                          $datas['CountryId'] =$tmpObject[33];
+                          $datas['ZipCodeId'] =$tmpObject[34];
+                          $datas['CityId'] =$tmpObject[35];
+                          $datas['IspId'] =$tmpObject[36];
+                          $datas['CountTypeId'] =$tmpObject[37];
+                          $datas['ConnectionTypeId'] =$tmpObject[38];
+                          $datas['in_bin'] = $file;
+                          $this->_model->_insert_ga($datas);
+                };//end of while ($contents = fread($handle, $rowSize)) 
             //rename bin folder in path uploads/ 
+            }
             @fclose($handle);
             @chmod(getcwd()."/".$dir2.$file, 0666);
             @rename(getcwd()."/".$dir2.$file, getcwd()."/".$dir2.$file.'.done');
@@ -682,72 +696,77 @@ class Connect extends Controller {
             $handlefolder = opendir (getcwd()."/".$dir2);
             while ($file = readdir ($handlefolder)) {
                 if (substr($file, -4) == '.bin') {
-                  $handle = fopen(getcwd()."/".$dir2.$file, 'rb');
-                  while ($contents = fread($handle, $rowSize)) {
-                      $tmpObject = array();
-                      for ($i=0; $i<$rowLength; $i++) {
-                           
-                           $data = unpack($code[$i]['code'], substr($contents, $code[$i]['accumulatedPointer'], $code[$i]['size']));         
-                           $data = $data[1];
-                           
-                           if ($code[$i]['name'] == 'IpAddress') {
-                              $data = (255 & ($data >> 24)).'.'.(255 & ($data >> 16)).'.'.(255 & $data>>8).'.'.(255 & $data);          
-                           } elseif ($code[$i]['name'] == 'UserId') {
-                              $user = '';
-                              for ($ii=0; $ii<strlen($data); $ii++) {
-                                 $userTmp = ord($data[$ii]);
-                                 $user = $user.dechex ((15 & ($userTmp >> 4))).dechex (15 & $userTmp);
-                              };
-                              $data = $user;    
-                              
-                           } elseif ($data < 0) {           // AND $code[$i]['type'] == 'unsignedint'
-                              if (!in_array($data, $errorcode))
-                                 $data = substr(bcsub($data*-1, 4294967296), 1);       
-                           };
-                           $tmpObject[$i] = $data;                         
-                        }; 
-                        $datas['VersionId'] = $tmpObject[0];
-                        $datas['SequenceId'] = $tmpObject[1];
-                        $datas['PlcNetworkId'] = $tmpObject[2];
-                        $datas['PlcSubNetworkId'] = $tmpObject[3];
-                        $datas['WebsiteId'] =$tmpObject[4];
-                        $datas['PlacementId'] =$tmpObject[5];
-                        $datas['PageId'] = $tmpObject[6];
-                        $datas['CmgnNetworkId'] =$tmpObject[7];
-                        $datas['CmgnSubNetworkId'] = $tmpObject[8];
-                        $datas['CampaignId'] =$tmpObject[9];
-                        $datas['MasterCampaignId'] =$tmpObject[10];
-                        $datas['BannerId'] =$tmpObject[11];
-                        $datas['BannerNumber'] =$tmpObject[12];
-                        $datas['PaymentId'] =$tmpObject[13];
-                        $datas['StateId'] =$tmpObject[14];
-                        $datas['AreaCodeId'] =$tmpObject[15];
-                        $datas['IpAddress'] =$tmpObject[16];
-                        $datas['UserId'] =$tmpObject[17];
-                        $datas['OsId'] =$tmpObject[18];
-                        $datas['TagType'] =$tmpObject[19];
-                        $datas['BrowserId'] =$tmpObject[20];
-                        $datas['BrowserLanguage'] =$tmpObject[21];
-                        $datas['TLDId'] =$tmpObject[22];
-                        $datas['MediaTypeId'] =$tmpObject[23];
-                        $datas['PlcContentTypeId'] = $tmpObject[24];
-                        $datas['Reserved2'] = $tmpObject[25];
-                        $datas['DateEntered'] =$tmpObject[26];
-                        $datas['Hour'] =$tmpObject[27];
-                        $datas['Minute'] =$tmpObject[28];
-                        $datas['Second'] =$tmpObject[29];
-                        $datas['AdServerIp'] =$tmpObject[30];
-                        $datas['AdServerFarmId'] =$tmpObject[31];
-                        $datas['DMAId'] =$tmpObject[32];
-                        $datas['CountryId'] =$tmpObject[33];
-                        $datas['ZipCodeId'] =$tmpObject[34];
-                        $datas['CityId'] =$tmpObject[35];
-                        $datas['IspId'] =$tmpObject[36];
-                        $datas['CountTypeId'] =$tmpObject[37];
-                        $datas['ConnectionTypeId'] =$tmpObject[38];
-                        $datas['in_bin'] = $file;
-                        $this->_model->_insert_gl($datas);
-                };
+                  //Check if records already exists
+                  $check_record = $this->_model->check_gl($file);
+                  //echo $check_record['0']['mycheck'];
+                  if($check_record['0']['mycheck'] == 0){
+                    $handle = fopen(getcwd()."/".$dir2.$file, 'rb');
+                    while ($contents = fread($handle, $rowSize)) {
+                        $tmpObject = array();
+                        for ($i=0; $i<$rowLength; $i++) {
+                             
+                             $data = unpack($code[$i]['code'], substr($contents, $code[$i]['accumulatedPointer'], $code[$i]['size']));         
+                             $data = $data[1];
+                             
+                             if ($code[$i]['name'] == 'IpAddress') {
+                                $data = (255 & ($data >> 24)).'.'.(255 & ($data >> 16)).'.'.(255 & $data>>8).'.'.(255 & $data);          
+                             } elseif ($code[$i]['name'] == 'UserId') {
+                                $user = '';
+                                for ($ii=0; $ii<strlen($data); $ii++) {
+                                   $userTmp = ord($data[$ii]);
+                                   $user = $user.dechex ((15 & ($userTmp >> 4))).dechex (15 & $userTmp);
+                                };
+                                $data = $user;    
+                                
+                             } elseif ($data < 0) {           // AND $code[$i]['type'] == 'unsignedint'
+                                if (!in_array($data, $errorcode))
+                                   $data = substr(bcsub($data*-1, 4294967296), 1);       
+                             };
+                             $tmpObject[$i] = $data;                         
+                          }; 
+                          $datas['VersionId'] = $tmpObject[0];
+                          $datas['SequenceId'] = $tmpObject[1];
+                          $datas['PlcNetworkId'] = $tmpObject[2];
+                          $datas['PlcSubNetworkId'] = $tmpObject[3];
+                          $datas['WebsiteId'] =$tmpObject[4];
+                          $datas['PlacementId'] =$tmpObject[5];
+                          $datas['PageId'] = $tmpObject[6];
+                          $datas['CmgnNetworkId'] =$tmpObject[7];
+                          $datas['CmgnSubNetworkId'] = $tmpObject[8];
+                          $datas['CampaignId'] =$tmpObject[9];
+                          $datas['MasterCampaignId'] =$tmpObject[10];
+                          $datas['BannerId'] =$tmpObject[11];
+                          $datas['BannerNumber'] =$tmpObject[12];
+                          $datas['PaymentId'] =$tmpObject[13];
+                          $datas['StateId'] =$tmpObject[14];
+                          $datas['AreaCodeId'] =$tmpObject[15];
+                          $datas['IpAddress'] =$tmpObject[16];
+                          $datas['UserId'] =$tmpObject[17];
+                          $datas['OsId'] =$tmpObject[18];
+                          $datas['TagType'] =$tmpObject[19];
+                          $datas['BrowserId'] =$tmpObject[20];
+                          $datas['BrowserLanguage'] =$tmpObject[21];
+                          $datas['TLDId'] =$tmpObject[22];
+                          $datas['MediaTypeId'] =$tmpObject[23];
+                          $datas['PlcContentTypeId'] = $tmpObject[24];
+                          $datas['Reserved2'] = $tmpObject[25];
+                          $datas['DateEntered'] =$tmpObject[26];
+                          $datas['Hour'] =$tmpObject[27];
+                          $datas['Minute'] =$tmpObject[28];
+                          $datas['Second'] =$tmpObject[29];
+                          $datas['AdServerIp'] =$tmpObject[30];
+                          $datas['AdServerFarmId'] =$tmpObject[31];
+                          $datas['DMAId'] =$tmpObject[32];
+                          $datas['CountryId'] =$tmpObject[33];
+                          $datas['ZipCodeId'] =$tmpObject[34];
+                          $datas['CityId'] =$tmpObject[35];
+                          $datas['IspId'] =$tmpObject[36];
+                          $datas['CountTypeId'] =$tmpObject[37];
+                          $datas['ConnectionTypeId'] =$tmpObject[38];
+                          $datas['in_bin'] = $file;
+                          $this->_model->_insert_gl($datas);
+                  };
+                } // end of check
                 //rename bin folder in path uploads/ 
                 @fclose($handle);
                 @chmod(getcwd()."/".$dir2.$file, 0666);
@@ -829,6 +848,12 @@ class Connect extends Controller {
         $handlefolder = opendir (getcwd()."/".$dir2);
             while ($file = readdir ($handlefolder)) {
                 if (substr($file, -4) == '.bin') {
+                  //Check if records already exists
+                $check_record = $this->_model->check_ir($file);
+                //echo $check_record['0']['mycheck'];
+                if($check_record['0']['mycheck'] == 0){
+                  //0 means no record
+                  //Input records to database
                   $handle = fopen(getcwd()."/".$dir2.$file, 'rb');
                   while ($contents = fread($handle, $rowSize)) {
                       $tmpObject = array();
@@ -875,6 +900,7 @@ class Connect extends Controller {
                         $datas['in_bin'] = $file;
                         $this->_model->_insert_ir($datas);
                      };
+                }
                 //rename bin folder in path uploads/ 
                 @fclose($handle);
                 @chmod(getcwd()."/".$dir2.$file, 0666);
@@ -969,6 +995,12 @@ class Connect extends Controller {
             while ($file = readdir ($handlefolder)) {
                 if (substr($file, -4) == '.bin') {
                   $handle = fopen(getcwd()."/".$dir2.$file, 'rb');
+                  //Check if records already exists
+                  $check_record = $this->_model->check_kv($file);
+                  //echo $check_record['0']['mycheck'];
+                  if($check_record['0']['mycheck'] == 0){
+                    //0 means no record
+                    //Input records to database
                   while ($contents = fread($handle, $rowSize)) {
                       $tmpObject = array();
                       for ($i=0; $i<$rowLength; $i++) {    
@@ -1042,6 +1074,7 @@ class Connect extends Controller {
                         $datas['in_bin'] = $file;
                         $this->_model->_insert_kv($datas);
                      };
+                }
                 //rename bin folder in path uploads/ 
                 @fclose($handle);
                 @chmod(getcwd()."/".$dir2.$file, 0666);
@@ -1137,6 +1170,12 @@ class Connect extends Controller {
             $handlefolder = opendir (getcwd()."/".$dir2);
             while ($file = readdir ($handlefolder)) {
                 if (substr($file, -4) == '.bin') {
+                  //Check if records already exists
+                $check_record = $this->_model->check_kw($file);
+                //echo $check_record['0']['mycheck'];
+                if($check_record['0']['mycheck'] == 0){
+                  //0 means no record
+                  //Input records to database
                   $handle = fopen(getcwd()."/".$dir2.$file, 'rb');
                   while ($contents = fread($handle, $rowSize)) {
                       $tmpObject = array();
@@ -1179,6 +1218,7 @@ class Connect extends Controller {
                         $datas['in_bin'] = $file;                    
                         $this->_model->_insert_kw($datas);
                      }; 
+                }
                 //rename bin folder in path uploads/ 
                 @fclose($handle);
                 @chmod(getcwd()."/".$dir2.$file, 0666);
@@ -1276,6 +1316,12 @@ class Connect extends Controller {
               $handlefolder = opendir (getcwd()."/".$dir2);
               while ($file = readdir ($handlefolder)) {
                   if (substr($file, -4) == '.bin') {
+                    //Check if records already exists
+                  $check_record = $this->_model->check_tc($file);
+                  //echo $check_record['0']['mycheck'];
+                  if($check_record['0']['mycheck'] == 0){
+                    //0 means no record
+                    //Input records to database
                     $handle = fopen(getcwd()."/".$dir2.$file, 'rb');
                     while ($contents = fread($handle, $rowSize)) {
                         $tmpObject = array();
@@ -1336,6 +1382,7 @@ class Connect extends Controller {
                         $datas['in_bin'] = $file;
                         $this->_model->_insert_tc($datas);
                      };
+                  }
                 //rename bin folder in path uploads/ 
                 @fclose($handle);
                 @chmod(getcwd()."/".$dir2.$file, 0666);
